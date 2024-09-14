@@ -65,7 +65,7 @@ def download_image(image_link, save_folder, retries=3, delay=3):
     
     create_placeholder_image(image_save_path) #Create a black placeholder image for invalid links/images
 
-def download_images(image_links, download_folder, allow_multiprocessing=True):
+def download_images(image_links, download_folder, allow_multiprocessing=True, max_workers=20):
     if not os.path.exists(download_folder):
         os.makedirs(download_folder)
 
@@ -73,11 +73,13 @@ def download_images(image_links, download_folder, allow_multiprocessing=True):
         download_image_partial = partial(
             download_image, save_folder=download_folder, retries=3, delay=3)
 
-        with multiprocessing.Pool(64) as pool:
+        # Use fewer processes to avoid handle limit errors
+        with multiprocessing.Pool(processes=max_workers) as pool:
             list(tqdm(pool.imap(download_image_partial, image_links), total=len(image_links)))
             pool.close()
             pool.join()
     else:
         for image_link in tqdm(image_links, total=len(image_links)):
             download_image(image_link, save_folder=download_folder, retries=3, delay=3)
+
         

@@ -34,3 +34,10 @@ entity_unit_map = {
 }
 
 allowed_units = {unit for entity in entity_unit_map for unit in entity_unit_map[entity]}
+num_units = len(allowed_units)
+
+# Compute number of entities
+num_entities = len(entity_unit_map)
+
+# Calculate number of classes
+num_classes = num_entities * num_units + 1  # +1 for no entity detected
